@@ -60,7 +60,7 @@ if (studentError || !student) {
         )
       )
     `)
-    .eq("student_id", activeStudent.id);
+    .eq("student_id", activeStudent!.id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
