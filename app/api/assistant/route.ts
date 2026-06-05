@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   const message = String(body.message || "").toLowerCase();
   const history = Array.isArray(body.history) ? body.history : [];
 const previousText = history
-  .map((item) => String(item.content || ""))
+  .map((item: any) => String(item.content || ""))
   .join(" ")
   .toLowerCase();
 
