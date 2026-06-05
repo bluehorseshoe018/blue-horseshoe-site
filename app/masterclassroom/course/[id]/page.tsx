@@ -31,7 +31,6 @@ export default function CourseDetailPage() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      student_id: 1,
       lesson_id: lessonId,
     }),
   });
