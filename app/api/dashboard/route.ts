@@ -21,23 +21,79 @@ export async function GET() {
 
   let activeStudent = student;
 
+let activeStudent = student;
+
 if (studentError || !student) {
-  const { data: newStudent, error: createStudentError } = await supabaseAdmin
-    .from("students")
-    .insert({
-      full_name: user.email,
-      email: user.email,
-      auth_user_id: user.id,
-    })
+  const { data: existingStudent, error: existingStudentError } =
+    await supabaseAdmin
+      .from("students")
+      .select("id")
+      .eq("email", user.email)
+      .single();
+
+  if (existingStudent) {
+    const { data: linkedStudent, error: linkError } = await supabaseAdmin
+      .from("students")
+      .update({ auth_user_id: user.id })
+      .eq("id", existingStudent.id)
+      .select("id")
+      .single();
+
+    if (linkError || !linkedStudent) {
+  console.error("LINK STUDENT ERROR:", linkError);
+
+  return NextResponse.json(
+    {
+      error:
+        linkError?.message ||
+        JSON.stringify(linkError) ||
+        "Could not link student record",
+    },
+    { status: 500 }
+  );
+}
+
+    activeStudent = linkedStudent;
+  } else {
+    const { data: newStudent, error: createStudentError } = await supabaseAdmin
+      .from("students")
+      .insert({
+        full_name: user.email,
+        email: user.email,
+        auth_user_id: user.id,
+      })
+      .select("id")
+      .single();
+
+    if (createStudentError || !newStudent) {
+      return NextResponse.json(
+        {
+          error:
+            createStudentError?.message || "Could not create student record",
+        },
+        { status: 500 }
+      );
+    }
+
+    activeStudent = newStudent;
+  }
+}
     .select("id")
     .single();
 
   if (createStudentError || !newStudent) {
-    return NextResponse.json(
-      { error: createStudentError?.message || "Could not create student record" },
-      { status: 500 }
-    );
-  }
+  console.error("CREATE STUDENT ERROR:", createStudentError);
+
+  return NextResponse.json(
+    {
+      error:
+        createStudentError?.message ||
+        JSON.stringify(createStudentError) ||
+        "Could not create student record",
+    },
+    { status: 500 }
+  );
+}
 
   activeStudent = newStudent;
 }
