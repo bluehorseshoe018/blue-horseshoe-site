@@ -70,9 +70,15 @@ if (studentError || !student) {
     enrollments?.map((item: any) => {
       const lessons = item.courses.lessons || [];
       const totalLessons = lessons.length;
-      const completedLessons = lessons.filter((lesson: any) =>
-        lesson.progress?.some((p: any) => p.completed)
-      ).length;
+      const completedLessonIds = new Set(
+        lessons
+          .filter((lesson: any) =>
+            lesson.progress?.some((p: any) => p.completed)
+          )
+          .map((lesson: any) => lesson.id)
+   );
+
+const completedLessons = completedLessonIds.size;
 
       return {
         ...item,

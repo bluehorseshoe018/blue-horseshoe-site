@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { createClient } from "@/utils/supabase/server";
 
 export async function GET(
   req: Request,
@@ -7,6 +8,29 @@ export async function GET(
 ) {
   const params = await context.params;
   const courseId = Number(params.id);
+
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  const { data: student, error: studentError } = await supabaseAdmin
+    .from("students")
+    .select("id")
+    .eq("auth_user_id", user.id)
+    .single();
+
+  if (studentError || !student) {
+    return NextResponse.json(
+      { error: "Student record not found" },
+      { status: 404 }
+    );
+  }
 
   const { data: course, error: courseError } = await supabaseAdmin
     .from("courses")
@@ -27,14 +51,27 @@ export async function GET(
   if (lessonsError) {
     return NextResponse.json({ error: lessonsError.message }, { status: 500 });
   }
-  const { data: progress } = await supabaseAdmin
-  .from("progress")
-  .select("lesson_id, completed")
-  .eq("student_id", 1)
-  .eq("completed", true);
 
-  const completedLessonIds = progress?.map((item) => item.lesson_id) || [];
+  const lessonIds = (lessons || []).map((lesson) => lesson.id);
 
+  const { data: progress, error: progressError } = await supabaseAdmin
+    .from("progress")
+    .select("lesson_id")
+    .eq("student_id", student.id)
+    .eq("completed", true)
+    .in("lesson_id", lessonIds);
 
-  return NextResponse.json({ course, lessons, completedLessonIds });
+  if (progressError) {
+    return NextResponse.json({ error: progressError.message }, { status: 500 });
+  }
+
+  const completedLessonIds = [
+    ...new Set((progress || []).map((item) => item.lesson_id)),
+  ];
+
+  return NextResponse.json({
+    course,
+    lessons,
+    completedLessonIds,
+  });
 }

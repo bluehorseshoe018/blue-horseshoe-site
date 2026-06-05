@@ -36,7 +36,9 @@ export default function CourseDetailPage() {
   });
 
   if (response.ok) {
-  setCompletedLessonIds((prev) => [...prev, lessonId]);
+  setCompletedLessonIds((prev) =>
+  [...new Set([...prev, lessonId])]
+);
 } else {
   alert("Could not mark lesson complete.");
 }
@@ -53,10 +55,18 @@ export default function CourseDetailPage() {
 
     loadCourse();
   }, [courseId]);
-  const completedCount = completedLessonIds.length;
-  const totalLessons = lessons.length;
-  const progressPercent =
-    totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+  const uniqueCompletedLessonIds = [
+  ...new Set(completedLessonIds)
+];
+
+const completedCount = uniqueCompletedLessonIds.length;
+
+const totalLessons = lessons.length;
+
+const progressPercent =
+  totalLessons > 0
+    ? Math.round((completedCount / totalLessons) * 100)
+    : 0;
   if (!course) {
     return (
       <main className="min-h-screen bg-slate-950 px-6 py-24 text-white">
