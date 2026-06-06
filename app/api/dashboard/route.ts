@@ -21,8 +21,6 @@ export async function GET() {
 
   let activeStudent = student;
 
-let activeStudent = student;
-
 if (studentError || !student) {
   const { data: existingStudent, error: existingStudentError } =
     await supabaseAdmin
@@ -62,7 +60,8 @@ if (studentError || !student) {
       email: user.email,
       auth_user_id: user.id,
     })
-  
+    .select("id")
+    .single();  
 
   if (createStudentError || !newStudent) {
     console.error("CREATE STUDENT ERROR:", createStudentError);
@@ -80,23 +79,6 @@ if (studentError || !student) {
   activeStudent = newStudent;
 }
    
-
-  if (createStudentError || !newStudent) {
-  console.error("CREATE STUDENT ERROR:", createStudentError);
-
-  return NextResponse.json(
-    {
-      error:
-        createStudentError?.message ||
-        JSON.stringify(createStudentError) ||
-        "Could not create student record",
-    },
-    { status: 500 }
-  );
-}
-
-  activeStudent = newStudent;
-}
 
   const { data: enrollments, error } = await supabaseAdmin
     .from("enrollments")
@@ -148,4 +130,5 @@ const completedLessons = completedLessonIds.size;
     }) || [];
 
   return NextResponse.json(dashboardData);
+}
 }
