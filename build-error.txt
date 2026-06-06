@@ -1,0 +1,26 @@
+
+> blue-horseshoe-site@0.1.0 build
+> next build
+
+▲ Next.js 16.2.6 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./app/api/dashboard/route.ts:81:5
+Expression expected
+  [90m79 |[0m   }
+  [90m80 |[0m }
+[31m[1m>[0m [90m81 |[0m     .select([32m"id"[0m)
+  [90m   |[0m     [31m[1m^[0m
+  [90m82 |[0m     .single();
+  [90m83 |[0m
+  [90m84 |[0m   [36mif[0m (createStudentError || !newStudent) {
+
+Parsing ecmascript source code failed
+
+
+    at <unknown> (./app/api/dashboard/route.ts:81:5)

@@ -55,31 +55,31 @@ if (studentError || !student) {
 
     activeStudent = linkedStudent;
   } else {
-    const { data: newStudent, error: createStudentError } = await supabaseAdmin
-      .from("students")
-      .insert({
-        full_name: user.email,
-        email: user.email,
-        auth_user_id: user.id,
-      })
-      .select("id")
-      .single();
+  const { data: newStudent, error: createStudentError } = await supabaseAdmin
+    .from("students")
+    .insert({
+      full_name: user.email,
+      email: user.email,
+      auth_user_id: user.id,
+    })
+  
 
-    if (createStudentError || !newStudent) {
-      return NextResponse.json(
-        {
-          error:
-            createStudentError?.message || "Could not create student record",
-        },
-        { status: 500 }
-      );
-    }
+  if (createStudentError || !newStudent) {
+    console.error("CREATE STUDENT ERROR:", createStudentError);
 
-    activeStudent = newStudent;
+    return NextResponse.json(
+      {
+        error:
+          createStudentError?.message ||
+          "Could not create student record",
+      },
+      { status: 500 }
+    );
   }
+
+  activeStudent = newStudent;
 }
-    .select("id")
-    .single();
+   
 
   if (createStudentError || !newStudent) {
   console.error("CREATE STUDENT ERROR:", createStudentError);

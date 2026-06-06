@@ -38,9 +38,23 @@ export default function Navbar() {
           <Link href="/get-involved" className="transition hover:text-white">
             Get Involved
           </Link>
+
           <Link href="/profile" className="transition hover:text-white">
             Profile
           </Link>
+
+          <Link href="/masterclassroom" className="transition hover:text-white">
+            Masterclasses
+          </Link>
+
+          <Link href="/login" className="transition hover:text-white">
+            Login
+          </Link>
+
+          <Link href="/signup" className="transition hover:text-white">
+            Sign Up
+          </Link>
+
           <Link href="/contact" className="transition hover:text-white">
             Contact
           </Link>
